@@ -1,0 +1,21 @@
+<configuration>
+	<!-- Console Appender -->
+	<appender name="CONSOLE"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%-5p: [%d{ISO8601}] %c - %m%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="com.rs.assign" level="debug">
+		<appender-ref ref="CONSOLE" />
+	</logger>
+
+	<logger name="org.hibernate.SQL" level="debug">
+		<appender-ref ref="CONSOLE" />
+	</logger>
+	<root level="info">
+		<appender-ref ref="CONSOLE" />
+	</root>
+</configuration>
+

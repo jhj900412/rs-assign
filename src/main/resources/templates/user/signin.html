@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="EUC-KR">
+<title>Rsupport Board Assignment</title>
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>로 그 인</title>
+	<style>
+	    #loginForm {
+	      width: 20%;
+	      padding-top: 20%;
+	      margin: 0 auto;
+	    }
+	   
+	    #login {
+	      text-align: center;
+	    }
+	    
+	    #btn_reset, #btn_signin {
+	    width: 50%;
+	    }
+	</style>
+</head>
+<body>
+
+	<form id="loginForm">
+		<fieldset id="login">
+			<legend>Login</legend>
+				<div class="input-group">
+					<input type="text" class="form-control" placeholder="Username" aria-describedby="basic-addon1"
+						id="username" name="username" autofocus>
+					<input type="password" class="form-control" placeholder="Password" aria-describedby="basic-addon1"
+						id="password" name="password">
+					<input type="button" class="btn btn-default" id="btn_signin" value="Login">
+          			<input type="reset"  class="btn btn-default" id="btn_reset" value="Cancel">
+				</div>
+      	</fieldset>
+  	</form>
+
+	<script>
+		$(document).ready(function() {
+		
+			function signup_btn_click() {
+				jQuery.ajax({
+					type : "GET",
+					url : "/board",
+					success : function(data) {
+					},
+					complete : function(data) {
+					},
+					error : function(xhr, status, error) {
+						alert(xhr.responseJSON.message);
+					}
+				});
+			}
+		
+			$("#btn_signin").click(function signin_btn_click() {
+				console.log("hey")
+				jQuery.ajax({
+					type : "POST",
+					url : "/user/login",
+					dataType : "JSON",
+					data : {
+						username : $("#username").val(),
+						password : $("#password").val()
+					},
+					success : function(data) {
+						location.href='/';
+					},
+					complete : function(data) {
+					},
+					error : function(xhr, status, error) {
+						alert(xhr.responseJSON.msg);
+						
+					}
+				});
+			});
+		});
+	</script>
+</body>
+</html>

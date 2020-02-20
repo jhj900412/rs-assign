@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Rsupport Board Assignment</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+	<style>
+		#container {
+	      width: 70%;
+	      margin: 0 auto;
+	      padding-top: 10%;
+	    }
+	    #list {
+	      text-align: center;
+	    }
+	    .table > thead {
+	      background-color: #b3c6ff;
+	    }
+	    .table > thead > tr > th {
+	      text-align: center;
+	    }
+	    .table-hover > tbody > tr:hover {
+	      background-color: #e6ecff;
+	    }
+	    .table > tbody > tr > td {
+	      text-align: center;
+	    }
+	    .table > tbody > tr > #title {
+	      text-align: left;
+	    }
+	    div > #paging {
+	      text-align: center;
+	    }
+	    div > #div_button {
+	   	text-align : right;
+	    	padding-bottom: 10px;
+	    }
+	    .hit {
+	      animation-name: blink;
+	      animation-duration: 1.5s;
+	      animation-timing-function: ease;
+	      animation-iteration-count: infinite;
+	    }
+	    @keyframes blink {
+	      from {color: white;}
+	      30% {color: yellow;}
+	      to {color: red; font-weight: bold;}
+	    }
+	</style>
+</head>
+<body>
+
+	<script>
+		
+		$(document).ready(function() {
+	
+			$("#btn_write").click(function() {
+				location.href="/view/board/create";
+			});
+	
+			$("#btn_logout").click(function() {
+				location.href="/logout";
+			});
+	
+			
+			var page = getUrlParameter("page");
+		 	if ( typeof page == "undefined" ){
+		 		page = "1";
+		 	}
+		 	
+			
+		 	$.ajax({
+		 		type : "GET",
+				url : "/board",
+				data:{
+					"page":page,
+					"size":getUrlParameter("size")
+				},
+				success : function(data) {
+					var articles = data.content;
+					var html = "";
+					for(var i = 0; i<articles.length; i++) {
+						var article = articles[i];
+						html+="<tr><td>"+article.boardId+"</td><td id='title'><a href='/view/board/view?page="+page+"&boardId="+ article.boardId +"'>"+article.subject
+						+"</a></td><td>"+article.user.nickName
+						+"</td><td>"+article.regDate
+						+"</td><tr>";
+					}
+					$("#boardBody").append(html);
+					
+					var pageNum = data.number + 1;
+					var list = data.size;
+					var bPageNumList = 10;
+					var block = Math.ceil(pageNum/bPageNumList);
+					var bStartPage = ((block - 1) * bPageNumList) + 1;
+					var bEndPage = bStartPage + bPageNumList - 1;
+					var totalPage = data.totalPages;
+					var totalBlock = Math.ceil(totalPage / bPageNumList);
+					if(bEndPage > totalPage) {
+						bEndPage = totalPage;
+					}
+					
+					$("#paging").append("<a href='/?page=1'>&lt&lt</a> ");
+					if(block <= 1) {
+						$("#paging").append("<a href='/?page=1'>&lt</a> ");
+					} else {
+						$("#paging").append("<a href='/?page="+(bStartPage - 1)+"'>&lt</a> ");
+					}
+					
+					for(var i = bStartPage; i <= bEndPage; i++) {
+						if(pageNum == i) {
+							$("#paging").append("<b>"+i+"</b> ");
+						} else {
+							$("#paging").append("<a href='/?page=" + i + "'>" + i + "</a> ");
+						}
+					}
+					
+					if(block >= totalBlock) {
+						$("#paging").append("<a href='/?page=" + totalPage + "'>&gt</a> ");
+					} else {
+						$("#paging").append("<a href='/?page=" + (bEndPage + 1) + "'>&gt</a> ");
+					}
+	
+					$("#paging").append("<a href='/?page=" + totalPage + "'>&gt&gt</a> ");
+				},
+				complete : function(data) {
+				},
+				error : function(xhr, status, error) {
+					console.log(xhr);
+					console.log(status);
+				}
+			});
+		 	
+		 	function getUrlParameter(sParam) {
+		 	    var sPageURL = window.location.search.substring(1);
+		 	    var sURLVariables = sPageURL.split('&');
+		 	    for (var i = 0; i < sURLVariables.length; i++) {
+		 	        var sParameterName = sURLVariables[i].split('=');
+		 	        if (sParameterName[0] == sParam) {
+		 	            return sParameterName[1];
+		 	        }
+	 	    	}
+		 	} 
+		 });
+	  	
+	</script>
+
+	<div id="container">
+		<div id="div_button">
+			<input type="button" id="btn_write" value="글쓰기">
+			<input type="button" id="btn_logout" value="로그아웃">
+		</div>
+		     
+	    <div>
+			<table class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+			            <th width="10%">번호</th>
+			            <th width="50%">제목</th>
+			            <th width="10%">작성자</th>
+			            <th width="20%">작성일</th>
+		          </tr>
+	        	</thead>
+	        	<tbody id="boardBody">
+	       		</tbody>
+	      	</table>
+	       
+	      	<div id="paging">
+	      	</div>
+		</div>
+	</div>
+
+</body>
+</html>
